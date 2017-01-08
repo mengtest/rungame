@@ -1,0 +1,5 @@
+*.csproj
+*.meta
+Library/
+Temp/
+rungame.userprefs

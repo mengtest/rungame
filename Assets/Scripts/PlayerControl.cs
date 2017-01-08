@@ -16,9 +16,10 @@ public class PlayerControl : MonoBehaviour
 	//private bool groundedNewPlatform = false;	// Whether or not the player is touching a platform they have not touched before
 	private Score score;				// Reference to the Score script.
 	private float newPosition = 0;
-	public float verticalPosition = 0;
+	public float characterXRadius = 0;
+	public float characterYRadius = 0;
+	public Vector2 platformStrokeCoords = new Vector2(0,0);
 	//public string cat = UnityEngine.StackTraceUtility.ExtractStackTrace();
-
 
 
 	void Awake()
@@ -26,19 +27,42 @@ public class PlayerControl : MonoBehaviour
 		// Setting up references.
 		groundCheck = transform.Find("groundCheck");
 		score = GameObject.Find("Score").GetComponent<Score>();
-
+		characterXRadius = GameObject.Find("stickfigure").GetComponent<SpriteRenderer>().bounds.extents.x;
+		characterYRadius = GameObject.Find("stickfigure").GetComponent<SpriteRenderer>().bounds.extents.y;
 	}
 
 
 	void Update()
 	{
-		verticalMovement (); // Detect if user jumped, jump if so, and adjust collisions
+		verticalMovement(); // Detect if user jumped, jump if so, and adjust collisions
 		horizontalMovement(); // Detect if left or right input was given and flip character and velocity if appropriate.
 		wrapAround(); // Detect if character has reached left or right side of scene and teleport to opposite side if appropriate.
 		updateScore(); // Detect if character is touching ground (grounded), increase score if appropriate.
 		boundsCheck(); // Detect if character is out of bounds and reset level if appropriate. (the character shouldn't ever hit this, it should only be called when something goes horribly wrong)
+		updatePlatforms(); // Detect if collision with top of platform has occurred, create new stroke sprite is appropriate.
 	}
 
+	void updatePlatforms()
+	{
+		if(grounded)
+			calculatePlatformStrokeCoords();
+			drawPlatformStroke(platformStrokeCoords);
+	}
+
+	void calculatePlatformStrokeCoords()
+	{
+		float offset = -0.2f;
+		float platformStrokeCoordX = transform.position.x + characterXRadius;
+		float platformStrokeCoordY = transform.position.y - characterYRadius - offset;
+		platformStrokeCoords = new Vector2(platformStrokeCoordX, platformStrokeCoordY);
+	}
+
+	void drawPlatformStroke(Vector2 platformStrokeCoords)
+	{
+		GameObject platformStroke = Instantiate(Resources.Load("platformStroke")) as GameObject;		// A platformStroke object;
+		platformStroke.GetComponent<SpriteRenderer>().sortingLayerName="platformStrokes";
+		Instantiate(platformStroke, platformStrokeCoords, transform.rotation);
+	}
 
 	void FixedUpdate ()
 	{
