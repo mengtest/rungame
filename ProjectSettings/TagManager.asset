@@ -3,16 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - ground
-  - Crate
-  - Enemy
-  - Wall
-  - Obstacle
-  - Bullet
-  - BombPickup
-  - ExplosionFX
-  - HealthBar
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -22,12 +13,12 @@ TagManager:
   - UI
   - 
   - 
-  - Bombs
   - Player
-  - Enemies
-  - Pickups
-  - Ground
   - PlatformStrokes
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 
@@ -50,21 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Default
-    uniqueID: 3363470833
-    locked: 0
   - name: Background
     uniqueID: 1535931219
     locked: 0
-  - name: Character
-    uniqueID: 2511236001
-    locked: 0
-  - name: Foreground
-    uniqueID: 1024582385
+  - name: Default
+    uniqueID: 3363470833
     locked: 0
   - name: UI
     uniqueID: 149272721
     locked: 0
   - name: PlatformStrokes
     uniqueID: 1273832731
+    locked: 0
+  - name: Character
+    uniqueID: 2511236001
     locked: 0
