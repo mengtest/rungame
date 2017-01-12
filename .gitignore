@@ -1,0 +1,6 @@
+*.csproj
+*.meta
+Library/
+Temp/
+rungame.userprefs
+prealphaalphaalpha_Data/

@@ -5,78 +5,104 @@ using UnityEngine.SceneManagement;
 public class PlayerControl : MonoBehaviour
 {
 	public bool facingRight = true;			// For determining which way the player is currently facing.
-	public bool jump = false;				// Condition for whether the player should jump.
-
-	public float moveForce = 10f;			// Amount of force added to move the player left and right.
-	public float maxSpeed = 5f;				// The fastest the player can travel in the x axis.
+	public float moveForce = 1500f;			// Amount of force added to move the player left and right.
 	public float jumpForce = 5000f;			// Amount of force added when the player jumps.
-
-	private Transform groundCheck;			// A position marking where to check if the player is grounded.
-	private bool grounded = false;			// Whether or not the player is grounded.
-	//private bool groundedNewPlatform = false;	// Whether or not the player is touching a platform they have not touched before
-	private Score score;				// Reference to the Score script.
-	private float newPosition = 0;
-	public float verticalPosition = 0;
-	//public string cat = UnityEngine.StackTraceUtility.ExtractStackTrace();
-
-
+	private bool grounded = false;			// Whether or not the player is grounded (standing on a platform).
+	private Rigidbody2D characterRigidbody; // Reference to the rigidbody2d of the character object.
+	private StrokeController strokeController; // Reference to the StrokeController script
+	private Score score;					// Reference to the Score script.
 
 	void Awake()
 	{
-		// Setting up references.
-		groundCheck = transform.Find("groundCheck");
+		// Setting up references to objects.
 		score = GameObject.Find("Score").GetComponent<Score>();
-
+		strokeController = GameObject.Find ("StrokeController").GetComponent<StrokeController>();
+		characterRigidbody = GetComponent<Rigidbody2D>();
 	}
 
+	void Update(){
+		// Detect if player pressed up, jump if so and disable collisions until they land.
+		verticalMovement ();
 
-	void Update()
-	{
-		verticalMovement (); // Detect if user jumped, jump if so, and adjust collisions
-		horizontalMovement(); // Detect if left or right input was given and flip character and velocity if appropriate.
-		wrapAround(); // Detect if character has reached left or right side of scene and teleport to opposite side if appropriate.
-		updateScore(); // Detect if character is touching ground (grounded), increase score if appropriate.
-		boundsCheck(); // Detect if character is out of bounds and reset level if appropriate. (the character shouldn't ever hit this, it should only be called when something goes horribly wrong)
+		// Detect if left or right input was given and flip character and velocity if appropriate.
+		horizontalMovement(); 
 	}
 
-
-	void FixedUpdate ()
+	void FixedUpdate()
 	{
-		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
-		grounded = Physics2D.Linecast (transform.position, groundCheck.position, 1 << LayerMask.NameToLayer ("Ground")); 
+		// Detect if character has reached left or right side of scene and teleport to opposite side if appropriate.
+		wrapAround(); 
+		// Detect if character is out of bounds and reset level if appropriate. 
+		//(the character shouldn't ever hit this, it should only be called when something goes horribly wrong)
+		boundsCheck(); 
+	}
+
+	void onCollisionEnter2D(){
+		grounded = true;
+	}
+	void OnCollisionStay2D(Collision2D collision2D) 
+	{
+		//If the player collides with a platform stroke
+		grounded = true;
+		SpriteRenderer platformStroke = collision2D.gameObject.GetComponent( (typeof(SpriteRenderer))) as SpriteRenderer;
+		// Change the color of the platform stroke.
+		Color blue = new Color (0f, 0f, 1f, 1f);
+		if (platformStroke.color != blue) {
+			platformStroke.color = blue;
+		// And update the score if they haven't touched the platform before.
+			updateScore ();
+		}
 	}
 
 	void boundsCheck()
 	{
-		if (GetComponent<Rigidbody2D> ().transform.position.y < -60)
-			ReloadGame();
+		// If the player character is super far off the screen, reload game.
+		if (Mathf.Abs(transform.position.y) > 60 || Mathf.Abs(transform.position.x) > 60) {
+			ReloadGame ();
+		}
 	}
 
 	void wrapAround()
 	{
-		if ((GetComponent<Rigidbody2D> ().transform.position.x <= -39) || (GetComponent<Rigidbody2D> ().transform.position.x >= 40))
-			Teleport();
+		// If the player hits the left or right edge of the playing screen, teleport them to the other side.
+		if ((transform.position.x < -42) || (transform.position.x > 42)) {
+			Teleport ();
+		}
 	}
 
 	void verticalMovement()
 	{
-
-		if (GetComponent<Rigidbody2D>().velocity.y <= 0 )
-			GetComponent<BoxCollider2D>().enabled = true;
-		else
-			GetComponent<BoxCollider2D>().enabled = false;
+		bool jumpKey = false;
 		// If the jump button is pressed and the player is grounded then the player should jump.
-		if (Input.GetButtonDown("Jump") && grounded)
+		if (Input.GetButtonDown ("Jump")) {
+			jumpKey = true;
+		} else {
+			jumpKey = false;
+		}
+
+		// If the character is not moving upward (velocity.y = 0) AND it is not moving downward (negative velocity.y) 
+		// then enable collisions on the character box collider so that it can land on platforms
+		if (characterRigidbody.velocity.y > 0) {
+			GetComponent<BoxCollider2D> ().enabled = false;
+		}
+		else{
+			GetComponent<BoxCollider2D>().enabled = true;
+		}
+		bool jump = false;
+		if (jumpKey && grounded) {
 			jump = true;
+		}
 
 		// If the player should jump...
 		if(jump)
 		{
 			// Add a vertical force to the player.
-			GetComponent<Rigidbody2D>().AddForce(new Vector2(0f, jumpForce), ForceMode2D.Impulse);
+			//characterRigidbody.velocity = (new Vector2(characterRigidbody.velocity.x, 0));
+			characterRigidbody.AddForce(new Vector2(0f, jumpForce), ForceMode2D.Force);
 
 			// Temporarily remove collision detection
 			GetComponent<BoxCollider2D>().enabled = false;
+			grounded = false;
 
 			// Make sure the player can't jump again until the jump conditions from Update are satisfied.
 			jump = false;
@@ -85,11 +111,21 @@ public class PlayerControl : MonoBehaviour
 	}
 	void horizontalMovement()
 	{
-		transform.Translate(moveForce, 0,0);
-		// If the player is changing direction (h has a different sign to velocity.x)
-		float h = Input.GetAxis("Horizontal");
+		float horizontalDirection = 0;
+		// Sets a variable to indicate which direction the user is facing.
+		if (Input.GetAxis ("Horizontal") > 0) {
+			horizontalDirection = 1;
+		} else if (Input.GetAxis ("Horizontal") < 0) {
+			horizontalDirection = -1;
+		}
+		// If the character's velocity does not match the moveForce, update it. (this keeps the player character at the
+		// correct speed).
+		if (characterRigidbody.velocity.x != moveForce) {
+			characterRigidbody.velocity = (new Vector2 (moveForce * Time.fixedDeltaTime, characterRigidbody.velocity.y));
+		}
+
 		// If the input is right and character is currently left, or vice versa...
-		if((h > 0 && !facingRight) ||( h < 0 && facingRight))
+		if((horizontalDirection > 0 && !facingRight) ||( horizontalDirection < 0 && facingRight))
 			// ... flip the player and their direction.
 			Flip();
 	}
@@ -98,7 +134,7 @@ public class PlayerControl : MonoBehaviour
 		// Switch the way the player is labelled as facing.
 		facingRight = !facingRight;
 		moveForce = -moveForce;
-		// Multiply the player's x local scale by -1.
+		// Multiply the player's x local scale by -1 to flip it.
 		Vector3 theScale = transform.localScale;
 		theScale.x *= -1;
 		transform.localScale = theScale;
@@ -106,28 +142,31 @@ public class PlayerControl : MonoBehaviour
 
 	void updateScore()
 	{
-		// If the player is grounded, then increase score.
-		if(grounded)
-			score.score += 100;
+		// Update the direct score by 1
+		score.score += 1;
+		// Calculate the percentage using the new score
+		score.percentage = ((float)score.score / (float)strokeController.totalStrokeCount)*100;
 	}
 	
 
 	void  Teleport ()
 	{
-		if (facingRight)
-			newPosition = -38;
-		else
-			newPosition = 40;
-		GetComponent<Rigidbody2D>().transform.position = new Vector3(newPosition, transform.position.y, transform.position.z);
+		float newPosition;
+		// If the player character is facing right, set new position to left wall.
+		if (facingRight) {
+			 newPosition = -41;
+		// If the player is facing left, set new position to right wall.
+		} else {
+			newPosition = 41;
+		}
+		// Apply the new position.
+		transform.position = new Vector3 (newPosition, transform.position.y, transform.position.z);
 	}
 
 
 	void ReloadGame()
 	{			
 		// Reload the level.
-		//Debug.Log("Cat cat cat");
-
-		//Application.LoadLevel(Application.loadedLevel);
-		SceneManager.LoadScene("Level", LoadSceneMode.Single);
+		SceneManager.LoadScene("Level1", LoadSceneMode.Single);
 	}
 }
