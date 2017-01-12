@@ -1,0 +1,26 @@
+{
+	"1": [{
+      "sizeX":"78",
+      "sizeY":"5",
+      "leftCenterX":"39",
+      "leftCenterY":"-22.2"
+   }],
+   "2": [{
+      "size.x":"30",
+      "size.y":"5",
+      "leftCenter.x":"20",
+      "leftCenter.y":"-2"
+   }],
+    "3": [{
+      "size.x":"30",
+      "size.y":"5",
+      "leftCenter.x":"-39",
+      "leftCenter.y":"15"
+   }],
+    "4": [{
+      "size.x":"15",
+      "size.y":"5",
+      "leftCenter.x":"24",
+      "leftCenter.y":"15"
+   }]
+}

@@ -1,29 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class Score : MonoBehaviour
 {
-	public int score = 0;					// The player's score.
-
-
-	private PlayerControl playerControl;	// Reference to the player control script.
-	private int previousScore = 0;			// The score in the previous frame.
-
-
-	void Awake ()
-	{
-		// Setting up the reference.
-		playerControl = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerControl>();
-	}
-
+	public int score = 0;	// The player's score.
+	public float percentage = 0; // The percentage of the level that is complete.
 
 	void Update ()
 	{
+		int displayPercentage = Mathf.RoundToInt (percentage);
 		// Set the score text.
-		GetComponent<GUIText>().text = "Score: " + score;
-
-		// Set the previous score to this frame's score.
-		previousScore = score;
+		GetComponent<GUIText>().text = displayPercentage  + "%" ;
+		if (displayPercentage == 100) {
+			SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+		}
 	}
 
 }
