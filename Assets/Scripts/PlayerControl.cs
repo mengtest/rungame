@@ -4,13 +4,17 @@ using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
+
+	private Rigidbody2D characterRigidbody; // Reference to the rigidbody2d of the character object.
+	private StrokeController strokeController; // Reference to the StrokeController script
+	private Score score;					// Reference to the Score script.
+	private LevelManager levelManager;	// LevelManager is needed to pull information about the level (width, etc)
+
 	public bool facingRight = true;			// For determining which way the player is currently facing.
 	public float moveForce = 1500f;			// Amount of force added to move the player left and right.
 	public float jumpForce = 5000f;			// Amount of force added when the player jumps.
 	private bool grounded = false;			// Whether or not the player is grounded (standing on a platform).
-	private Rigidbody2D characterRigidbody; // Reference to the rigidbody2d of the character object.
-	private StrokeController strokeController; // Reference to the StrokeController script
-	private Score score;					// Reference to the Score script.
+
 
 	void Awake()
 	{
@@ -18,12 +22,12 @@ public class PlayerControl : MonoBehaviour
 		score = GameObject.Find("Score").GetComponent<Score>();
 		strokeController = GameObject.Find ("StrokeController").GetComponent<StrokeController>();
 		characterRigidbody = GetComponent<Rigidbody2D>();
+		levelManager = GameObject.Find("LevelManager").GetComponent<LevelManager>();
 	}
 
 	void Update(){
 		// Detect if player pressed up, jump if so and disable collisions until they land.
 		verticalMovement ();
-
 		// Detect if left or right input was given and flip character and velocity if appropriate.
 		horizontalMovement(); 
 	}
@@ -50,7 +54,7 @@ public class PlayerControl : MonoBehaviour
 		if (platformStroke.color != blue) {
 			platformStroke.color = blue;
 		// And update the score if they haven't touched the platform before.
-			updateScore ();
+			updateScore();
 		}
 	}
 
@@ -65,7 +69,7 @@ public class PlayerControl : MonoBehaviour
 	void wrapAround()
 	{
 		// If the player hits the left or right edge of the playing screen, teleport them to the other side.
-		if ((transform.position.x < -42) || (transform.position.x > 42)) {
+		if ((characterRigidbody.transform.position.x < (levelManager.leftWall )) || (characterRigidbody.transform.position.x > levelManager.rightWall)) {
 			Teleport ();
 		}
 	}
@@ -154,11 +158,15 @@ public class PlayerControl : MonoBehaviour
 		float newPosition;
 		// If the player character is facing right, set new position to left wall.
 		if (facingRight) {
-			 newPosition = -41;
+			newPosition = levelManager.leftWall-1;
+			if(grounded ){
+
+			}
 		// If the player is facing left, set new position to right wall.
 		} else {
-			newPosition = 41;
+			newPosition = levelManager.rightWall+1;
 		}
+
 		// Apply the new position.
 		transform.position = new Vector3 (newPosition, transform.position.y, transform.position.z);
 	}

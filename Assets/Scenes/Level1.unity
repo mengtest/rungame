@@ -115,9 +115,9 @@ BoxCollider2D:
   m_Material: {fileID: 6200000, guid: 24ac79603fb61400588e37d9f6fe952a, type: 2}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: 0.5075963, y: 0.3200657}
+  m_Offset: {x: 0.49576128, y: 0.3910751}
   serializedVersion: 2
-  m_Size: {x: 2.475126, y: 3.6193624}
+  m_Size: {x: 1.2679722, y: 1.9624833}
 --- !u!114 &44336748
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   facingRight: 1
   moveForce: 1500
-  jumpForce: 5000
+  jumpForce: 2000
 --- !u!4 &44336749
 Transform:
   m_ObjectHideFlags: 0
@@ -141,7 +141,7 @@ Transform:
   m_GameObject: {fileID: 44336746}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.04, y: 1.11, z: -1}
-  m_LocalScale: {x: 1.2, y: 1.2, z: 1.2}
+  m_LocalScale: {x: 1, y: 1, z: 1.2}
   m_Children:
   - {fileID: 905497176}
   m_Father: {fileID: 0}
@@ -240,6 +240,52 @@ GUIText:
     rgba: 4294967295
   m_PixelCorrect: 1
   m_RichText: 1
+--- !u!1 &598147397
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 598147398}
+  - 114: {fileID: 598147399}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &598147398
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 598147397}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 23.757278, y: -18.087664, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+--- !u!114 &598147399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 598147397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4944737756902f84dab27139e5777570, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelWidth: {x: 0, y: 0}
+  leftWall: 0
+  rightWall: 0
+  width: 0
+  midway: 0
+  third: 0
+  quarter: 0
 --- !u!1 &644203106
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +590,7 @@ GUIText:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1883727476}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Text: You won!
   m_Anchor: 0
