@@ -10,6 +10,8 @@ public class LevelManager : MonoBehaviour {
 	public float midway;
 	public float third;
 	public float quarter;
+	public int currentLevel;
+	private int highestLevel;
 
 	// Use this for initialization
 	void Awake () {
@@ -20,7 +22,11 @@ public class LevelManager : MonoBehaviour {
 		midway = width / 2;
 		third = width / 3;
 		quarter = width / 4;
+
+		currentLevel = 1;
+		highestLevel = 1;
 	}
+
 	
 	// Update is called once per frame
 	void Update () {

@@ -13,7 +13,9 @@ public class Score : MonoBehaviour
 		// Set the score text.
 		GetComponent<GUIText>().text = displayPercentage  + "%" ;
 		if (displayPercentage == 100) {
-			SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+			int x = (int)SceneManager.GetActiveScene () as int;
+			x++;
+			SceneManager.LoadScene(x, LoadSceneMode.Single);
 		}
 	}
 

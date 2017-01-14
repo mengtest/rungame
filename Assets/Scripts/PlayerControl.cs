@@ -175,6 +175,6 @@ public class PlayerControl : MonoBehaviour
 	void ReloadGame()
 	{			
 		// Reload the level.
-		SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+		SceneManager.LoadScene(SceneManager.GetActiveScene(), LoadSceneMode.Single);
 	}
 }
