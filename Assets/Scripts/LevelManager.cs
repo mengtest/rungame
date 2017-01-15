@@ -22,14 +22,16 @@ public class LevelManager : MonoBehaviour {
 		midway = width / 2;
 		third = width / 3;
 		quarter = width / 4;
-
-		currentLevel = 1;
 		highestLevel = 1;
+		currentLevel = 1;
 	}
 
-	
-	// Update is called once per frame
-	void Update () {
-	
+	public void nextLevel() {
+		if (currentLevel == highestLevel) {
+			currentLevel = 1;
+		} else {
+			currentLevel++;
+
+		}
 	}
 }
